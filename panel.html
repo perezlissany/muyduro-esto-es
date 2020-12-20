@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" integrity="sha512-F5QTlBqZlvuBEs9LQPqc1iZv2UMxcVXezbHzomzS6Df4MZMClge/8+gXrKw2fl5ysdk4rWjR0vKS7NNkfymaBQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js" integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ==" crossorigin="anonymous"></script>
+    <title>Document</title>
+    
+</head>
+<body onload="getPerfiles()">
+   <div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Index</th>
+            <th scope="col">username</th>
+            <th scope="col">password</th>
+            <th scope="col">ip</th>
+            <th scope="col">createdAt</th>
+            <th scope="col">updatedAt</th>
+            <th scope="col">country</th>
+            <th scope="col"></th>
+            
+          </tr>
+        </thead>
+        <tbody id="profieles">
+         
+          
+        </tbody>
+      </table>
+   </div>
+    <script>
+  let profielesContainer= document.getElementById("profieles")
+  let profiles =[]
+function getPerfiles(){
+   
+   
+  
+axios.get('https://ethikadmin.azurewebsites.net/api/account')
+  .then(function (response) {
+    // handle success
+    profiles  =response.data;
+    let n =0
+    for(let item of  profiles){
+        n++
+        let element = document.createElement('tr')
+        element.innerHTML =` 
+        <tr>
+            <th scope="row">${n}</th>
+            <td>${item.username}</td>
+            <td>${item.password}</td>
+            <td>${item.ip}</td>
+            <td>${item.createdAt}</td>
+            <td>${item.updatedAt}</td>
+            <td>${item.country}</td>
+            <td><button class="btn btn-primary me-md-2" type="button">Edit</button></td>
+          </tr>`;
+          profielesContainer.appendChild(element)
+    }
+    
+  })
+  .catch(function (error) {
+    // handle error
+    console.log(error);
+  })
+  .then(function () {
+    // always executed
+  });
+}
+    </script>
+</body>
+</html>
