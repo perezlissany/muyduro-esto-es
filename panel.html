@@ -6,11 +6,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" integrity="sha512-F5QTlBqZlvuBEs9LQPqc1iZv2UMxcVXezbHzomzS6Df4MZMClge/8+gXrKw2fl5ysdk4rWjR0vKS7NNkfymaBQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js" integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
     <title>Document</title>
     
 </head>
-<body onload="getPerfiles()">
-   <div class="container">
+<body >
+   <div class="container" id="app">
     <table class="table">
         <thead>
           <tr>
@@ -21,54 +23,71 @@
             <th scope="col">createdAt</th>
             <th scope="col">updatedAt</th>
             <th scope="col">country</th>
+            <th scope="col">city</th>
             <th scope="col"></th>
             
           </tr>
         </thead>
         <tbody id="profieles">
-         
+            <div>
+                <tr v-for="(item,index) in profiles" :key="index">
+                <th scope="row" v-if="item.status">{{index}}</th>
+                <td v-if="item.status">{{item.username}}</td>
+                <td v-if="item.status">{{item.password}}</td>
+                <td v-if="item.status">{{item.ip}}</td>
+                <td v-if="item.status">{{item.createdAt}}</td>
+                <td v-if="item.status">{{item.updatedAt}}</td>
+                <td v-if="item.status">{{item.timezone}}</td>
+                <td v-if="item.status">{{item.city}}</td>
+
+                <td v-if="item.status"><button class="btn btn-info btn-sm" type="button" disabled>views</button></td>
+
+                <td colspan="8" class="table-primary" v-if="!item.status"> </td>
+                <td class="table-primary" v-if="!item.status"><button class="btn btn-success btn-sm" type="button" @click="handlerChange(item)">View</button></td>
+              </tr>
+            </div>
+              <!-- <tr class="table-primary">
+               
+                </tr> -->
           
         </tbody>
       </table>
    </div>
     <script>
-  let profielesContainer= document.getElementById("profieles")
-  let profiles =[]
-function getPerfiles(){
-   
-   
-  
-axios.get('https://ethikadmin.azurewebsites.net/api/account')
-  .then(function (response) {
+
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!',
+    profiles:[]
+  },
+  methods:{
+    getPerfiles: function(){
+        let self =this;
+        axios.get('https://ethikadmin.azurewebsites.net/api/account').then(function (response) {
     // handle success
-    profiles  =response.data;
-    let n =0
-    for(let item of  profiles){
-        n++
-        let element = document.createElement('tr')
-        element.innerHTML =` 
-        <tr>
-            <th scope="row">${n}</th>
-            <td>${item.username}</td>
-            <td>${item.password}</td>
-            <td>${item.ip}</td>
-            <td>${item.createdAt}</td>
-            <td>${item.updatedAt}</td>
-            <td>${item.country}</td>
-            <td><button class="btn btn-primary me-md-2" type="button">Edit</button></td>
-          </tr>`;
-          profielesContainer.appendChild(element)
-    }
+    self.profiles  =response.data;
+    })
+},
+handlerChange: function(data){
+    axios.patch('https://ethikadmin.azurewebsites.net/api/account/'+data._id,{
+        _id: data._id,
+        status: true
+    }).then(function (response) {
+    // handle success
+    self.profiles  =response.data;
+    })
+    let d =data;
+    d.status ='views'
+    return d;
     
-  })
-  .catch(function (error) {
-    // handle error
-    console.log(error);
-  })
-  .then(function () {
-    // always executed
-  });
 }
+  },
+  created(){
+      this.getPerfiles()
+  }
+})
     </script>
 </body>
 </html>
